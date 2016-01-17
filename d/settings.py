@@ -29,17 +29,19 @@ ALLOWED_HOSTS = []
 
 
 # Application definition
+D_APP = [
+    'scrape',
+]
 
 INSTALLED_APPS = [
-    'scrape',
-
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-]
+] + D_APP
+TEST_APPS = D_APP
 
 MIDDLEWARE_CLASSES = [
     'django.middleware.security.SecurityMiddleware',
@@ -106,9 +108,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/1.9/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'ja-JP'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Tokyo'
 
 USE_I18N = True
 
@@ -121,3 +123,14 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.9/howto/static-files/
 
 STATIC_URL = '/static/'
+
+
+# nose
+INSTALLED_APPS.append('django_nose')
+TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
+NOSE_ARGS = [
+    # '--with-coverage',
+    # '--cover-package=' + ",".join(TEST_APPS),
+    # '--cover-branches',
+    # '--cover-erase',
+]

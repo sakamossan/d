@@ -1,3 +1,10 @@
-from django.test import TestCase
+# coding:utf-8
+from __future__ import unicode_literals
 
-# Create your tests here.
+from .scrape import Page
+
+
+def test_url():
+    p = Page({})
+    assert p.url().startswith("http://www")
+
