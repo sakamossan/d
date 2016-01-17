@@ -6,7 +6,6 @@ from django_extensions.db.models import TimeStampedModel
 
 
 class ModelBase(TimeStampedModel):
-    """プロジェクト内で共通して使用するベースクラス"""
 
     class Meta:
         abstract = True
@@ -14,3 +13,8 @@ class ModelBase(TimeStampedModel):
     def __str__(self):
         return "(%s:id=%s)" % (self.__class__.__name__, self.id)
 
+
+class Shop(ModelBase):
+
+    id = models.CharField(primary_key=True, max_length=64)
+    area = models.CharField(max_length=8)

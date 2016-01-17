@@ -12,3 +12,5 @@ class Page(object):
 
     def url(self):
          return self.domain
+
+
