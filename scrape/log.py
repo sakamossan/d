@@ -31,9 +31,18 @@ class Writer(object):
         :type serializable: dict|list[dict]
         :rtype: str
         """
-        return json.dumps(serializable, cls=self.Encoder)
+        return json.dumps(
+            serializable,
+            sort_keys=True,
+            ensure_ascii=False,
+            cls=self.Encoder
+        )
 
-    def write_jsonlines(self, list_of_serializable, delim="\n"):
+    def write_jsonlines(self, list_of_serializable, delim="\n", file_close=False):
         """:type list_of_serializable: list[dict|list]"""
         self.file.writelines([
-            self.to_json(d) + delim for d in list_of_serializable])
+            (self.to_json(d) + delim).encode('utf-8')
+            for d in list_of_serializable
+        ])
+        if file_close:
+            self.file.close()
