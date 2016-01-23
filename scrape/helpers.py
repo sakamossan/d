@@ -21,6 +21,7 @@ def norm_datetime(dt, interval=5):
     while interval / 2.0 < abs(dt.minute - cur):
         cur += interval
     else:
+        # TODO ValueError: minute must be in 0..59
         return dt.replace(minute=cur, second=0, microsecond=0)
 
 
