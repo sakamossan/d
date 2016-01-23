@@ -1,13 +1,11 @@
 # coding:utf-8
 from __future__ import unicode_literals
 
-# coding:utf-8
-
-import re
 import datetime
+import functools32
 
-
-# 現システムでは03:00 ~ 09:00という勤務時間は例外とする
+# お店の開始時間を6時とする
+# 現システムでは03:00 ~ 09:00というような、閉店時間をまたぐ勤務時間は例外とする
 TomorrowHour = 6
 
 
@@ -26,6 +24,7 @@ def norm_datetime(dt, interval=5):
         return dt.replace(minute=cur, second=0, microsecond=0)
 
 
+@functools32.lru_cache()
 def current_term():
     return norm_datetime(datetime.datetime.now(), 5)
 
@@ -51,6 +50,7 @@ def to_biz_date(dtm):
     return (dtm - datetime.timedelta(days=is_am_midnight)).date()
 
 
+@functools32.lru_cache()
 def clock_to_datetime(clock, now=None):
     """
     `18:30`といった表記をdatetimeに変換する
@@ -66,16 +66,6 @@ def clock_to_datetime(clock, now=None):
         # 00:00 ~ 05:59
         biz_dt += datetime.timedelta(days=1)
     return datetime.datetime.combine(biz_dt, tm)
-
-
-def datetime_parser(dct):
-    for k, v in dct.items():
-        if isinstance(v, basestring) and re.search("^\d{4}-\d{2}-\d{2}", v):
-            try:
-                dct[k] = datetime.datetime.strptime(v, "%Y-%m-%dT%H:%M:%S")
-            except:
-                pass
-    return dct
 
 
 if __name__ == "__main__":

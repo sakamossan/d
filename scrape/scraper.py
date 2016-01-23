@@ -5,7 +5,7 @@ import re
 import urllib2
 import bs4
 import datetime
-from scrape.helpers import clock_to_datetime
+from scrape.helpers import clock_to_datetime, current_term
 
 
 # 最低限検索に引っかからないようにする
@@ -35,10 +35,14 @@ class Scraper(object):
         self.root = bs4.BeautifulSoup(page.get_html(), "html.parser")
 
     def distribute_extractors(self):
+        """:rtype: list[Extractor]"""
         return [
             Extractor(chunk) for chunk
             in self.root.findAll("div", attrs={"id": "shukkin_list"})
         ]
+
+    def extract_data(self):
+        return [e.extract() for e in self.distribute_extractors()]
 
 
 class Extractor(object):
@@ -63,6 +67,7 @@ class Extractor(object):
             'status': self.get_status(),
             'clock_in': in_,
             'clock_out': out,
+            'checked_term': current_term()
         }
 
     def get_age(self):
