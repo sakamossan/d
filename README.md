@@ -5,8 +5,10 @@
 ```bash
 virtualenv d && cd $_
 source bin/activate
-git clone git@github.com:sakamossan/d.git cd d
+git clone git@github.com:sakamossan/d.git && cd d
+pip install -U setuptools
 pip install -r requirements.txt
+python ./manage.py migrate
 python ./manage.py runserver
 ```
 
