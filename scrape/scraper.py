@@ -5,6 +5,7 @@ import re
 import urllib2
 import bs4
 import datetime
+
 from scrape.helpers import clock_to_datetime, current_term
 
 
@@ -42,13 +43,21 @@ class Scraper(object):
         ]
 
     def extract_data(self):
-        return [e.extract() for e in self.distribute_extractors()]
+        return filter(bool, [e.extract() for e in self.distribute_extractors()])
+
+
+class ExtractException(ValueError):
+    pass
+
+class NotGirlException(ExtractException):
+    """
+    gingiraなどでは割引情報の広告が嬢に紛れて表示されている
+    出勤情報として不適格なので例外とする
+    """
+    pass
 
 
 class Extractor(object):
-
-    class ExtractException(ValueError):
-        pass
 
     def __init__(self, bs_chunk):
         """:type bs_chunk: BeautifulSoup"""
@@ -57,21 +66,28 @@ class Extractor(object):
 
     def extract(self):
         in_, out = self.get_clock_in_out()
-        return {
-            'girl_id': self.get_girl_id(),
-            'name': self.get_name(),
-            'age': self.get_age(),
-            'img_url': self.get_img_url(),
-            'shop_id': self.get_shop_id(),
+        try:
+            return {
+                'girl_id': self.get_girl_id(),
+                'name': self.get_name(),
+                'age': self.get_age(),
+                'img_url': self.get_img_url(),
+                'shop_id': self.get_shop_id(),
 
-            'status': self.get_status(),
-            'clock_in': in_,
-            'clock_out': out,
-            'checked_term': current_term()
-        }
+                'status': self.get_status(),
+                'clock_in': in_,
+                'clock_out': out,
+                'checked_term': current_term()
+            }
+        except NotGirlException:
+            # TODO logging
+            return None
 
     def get_age(self):
         txt = self.chunk.find("th").text
+        if '割】' in txt:
+            # gingira?
+            raise NotGirlException("girl_id:{}".format(self.get_girl_id()))
         found = re.findall(r'\d{2}', txt)
         return int(found[0])
 

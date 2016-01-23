@@ -18,3 +18,7 @@ class Shop(ModelBase):
 
     id = models.CharField(primary_key=True, max_length=64)
     area = models.CharField(max_length=8)
+
+    @classmethod
+    def scrapeable(cls):
+        return cls.objects.all()

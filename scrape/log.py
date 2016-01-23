@@ -33,15 +33,7 @@ class Writer(object):
         """
         return json.dumps(serializable, cls=self.Encoder)
 
-    def write_jsonlines(self, list_of_serializable, with_close=True, delim="\n"):
+    def write_jsonlines(self, list_of_serializable, delim="\n"):
         """:type list_of_serializable: list[dict|list]"""
         self.file.writelines([
             self.to_json(d) + delim for d in list_of_serializable])
-        if with_close and not self.file.closed:
-            self.file.close()
-
-
-class Reader(object):
-
-    def __init__(self, file_path):
-        self.file = open(file_path, 'r')
