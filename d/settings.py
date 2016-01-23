@@ -129,6 +129,7 @@ STATIC_URL = '/static/'
 INSTALLED_APPS.append('django_nose')
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 NOSE_ARGS = [
+    '--processes=-1',
     # '--with-coverage',
     # '--cover-package=' + ",".join(TEST_APPS),
     # '--cover-branches',
