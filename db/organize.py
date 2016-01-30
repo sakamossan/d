@@ -21,7 +21,12 @@ class NotOurDataException(BaseException):
 class Organizer(object):
 
     def organize(self, data):
-        pass
+        try:
+            self.process_girl(data)
+            self.process_attendance(data)
+            self.process_status_log(data)
+        except NotOurDataException:
+            pass
 
     def save_or_raise(self, obj):
         try:
