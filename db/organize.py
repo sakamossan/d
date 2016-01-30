@@ -1,11 +1,20 @@
 # coding:utf-8
 from __future__ import unicode_literals
 
+from django.db.utils import IntegrityError
 from scrape.helpers import to_biz_date
-from db.models import Girl, Attendance
+from db.models import Girl, Attendance, StatusLog
 
 
 def organize_data(data):
+    pass
+
+
+class InvalidDataException(BaseException):
+    pass
+
+
+class NotOurDataException(BaseException):
     pass
 
 
@@ -13,6 +22,12 @@ class Organizer(object):
 
     def organize(self, data):
         pass
+
+    def save_or_raise(self, obj):
+        try:
+            obj.save()
+        except (IntegrityError, ValueError):
+            raise InvalidDataException
 
     def process_girl(self, data):
         """:rtype: (Girl, bool)"""
@@ -23,10 +38,10 @@ class Organizer(object):
             girl = Girl()
             girl.id = data['girl_id']
             girl.name = data['name']
-            girl.age = data['age']
-            girl.shop_id = data['shop_id']
+            girl.age = data.get('age')
+            girl.shop_id = data.get('shop_id')
             girl.img_url = data['img_url']
-            girl.save()
+            self.save_or_raise(girl)
             return girl, True
 
     def process_attendance(self, data):
@@ -42,5 +57,25 @@ class Organizer(object):
             atnd.date = to_biz_date(data['checked_term'])
             atnd.clock_in = data['clock_in']
             atnd.clock_out = data['clock_out']
-            atnd.save()
+            self.save_or_raise(atnd)
             return atnd, True
+
+    def process_status_log(self, data):
+        """:rtype: (StatusLog, bool)"""
+        if not data.get('status') in ('off', 'work', 'wait'):
+            raise NotOurDataException
+
+        checked_at = data.get('checked_term')
+        atnd_id = Attendance.composite_pk(
+            data['girl_id'],
+            to_biz_date(checked_at))
+        try:
+            pk = StatusLog.composite_pk(atnd_id, checked_at)
+            return StatusLog.find_by_pk_with_cache(pk), False
+        except StatusLog.DoesNotExist:
+            stat = StatusLog()
+            stat.attendance = Attendance.find_by_pk_with_cache(atnd_id)
+            stat.checked_at = checked_at
+            stat.status = data['status']
+            self.save_or_raise(stat)
+            return stat, True

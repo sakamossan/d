@@ -40,12 +40,12 @@ class StatusLog(ModelBase):
     status = models.CharField(max_length=8, null=True)
 
     def save(self, **kwargs):
-        self.id = StatusLog.composite_pk(self)
+        self.id = StatusLog.composite_pk(self.attendance.id, self.checked_at)
         super(StatusLog, self).save(**kwargs)
 
     @classmethod
-    def composite_pk(cls, obj):
+    def composite_pk(cls, attendance_id, checked_at):
         return "{0}-{1:%H%M%S}".format(
-            obj.attendance.id,
-            obj.checked_at
+            attendance_id,
+            checked_at
         )

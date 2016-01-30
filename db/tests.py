@@ -1,12 +1,13 @@
 # coding: utf-8
 from __future__ import unicode_literals
 
+import copy
 import datetime
 from django.test import TestCase
 from scrape.models import Shop
 from jsonl.tests import dummy_data
 from db.models import Girl, Attendance, StatusLog
-from db.organize import Organizer
+from db.organize import Organizer, InvalidDataException, NotOurDataException
 
 
 class TestSaves(TestCase):
@@ -63,6 +64,12 @@ class TestOrganizer(TestCase):
         # count-inserted
         self.assertEqual(Girl.count(), 1)
 
+        # abnormal
+        invalid = copy.copy(datum)
+        invalid['girl_id'] = 'test'
+        del invalid['age']
+        self.assertRaises(InvalidDataException, self.org.process_girl, invalid)
+
     def test_process_attendance(self):
         datum = self.data[1]
 
@@ -85,6 +92,34 @@ class TestOrganizer(TestCase):
 
         # count-inserted
         self.assertEqual(Attendance.count(), 1)
+
+    def test_process_status_log(self):
+        datum = self.data[2]
+
+        # exercise
+        self.org.process_girl(datum)
+        self.org.process_attendance(datum)
+
+        # first
+        stat, is_new = self.org.process_status_log(datum)
+        self.assertTrue(is_new)
+        self.assertEqual(stat.id, '8907484-20160130-164000')
+        self.assertEqual(stat.attendance.id, '8907484-20160130')
+        self.assertEqual(stat.checked_at, datetime.datetime(2016, 1, 30, 16, 40, 0))
+        self.assertEqual(stat.status, 'off')
+
+        # second
+        snd, is_not_new = self.org.process_status_log(datum)
+        self.assertFalse(is_not_new)
+        self.assertEqual(snd.id, '8907484-20160130-164000')
+
+        # count-inserted
+        self.assertEqual(StatusLog.count(), 1)
+
+        # abnormal
+        null_status = copy.copy(datum)
+        del null_status['status']
+        self.assertRaises(NotOurDataException, self.org.process_status_log, null_status)
 
 
 
