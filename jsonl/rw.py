@@ -46,3 +46,14 @@ class Writer(object):
         ])
         if file_close:
             self.file.close()
+
+
+class Reader(object):
+
+    def __init__(self, file_path):
+        self.file = open(file_path, 'r')
+
+    def readlines(self):
+        for line in self.file.readlines():
+            yield json.loads(line)
+        raise StopIteration
