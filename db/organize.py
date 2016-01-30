@@ -6,10 +6,6 @@ from scrape.helpers import to_biz_date
 from db.models import Girl, Attendance, StatusLog
 
 
-def organize_data(data):
-    pass
-
-
 class InvalidDataException(BaseException):
     pass
 
@@ -51,6 +47,9 @@ class Organizer(object):
 
     def process_attendance(self, data):
         """:rtype: (Attendance, bool)"""
+        if data.get('clock_in') is None or data.get('clock_out') is None:
+            raise NotOurDataException
+
         try:
             pk = Attendance.composite_pk(
                 data['girl_id'],
