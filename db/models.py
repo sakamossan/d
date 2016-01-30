@@ -24,12 +24,12 @@ class Attendance(ModelBase):
     clock_out = models.DateTimeField()
 
     def save(self, **kwargs):
-        self.id = Attendance.composite_pk(self)
+        self.id = Attendance.composite_pk(self.girl.id, self.date)
         super(Attendance, self).save(**kwargs)
 
     @classmethod
-    def composite_pk(cls, obj):
-        return "{0}-{1:%Y%m%d}".format(obj.girl.id, obj.date)
+    def composite_pk(cls, girl_id, date):
+        return "{0}-{1:%Y%m%d}".format(girl_id, date)
 
 
 class StatusLog(ModelBase):

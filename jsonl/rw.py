@@ -1,6 +1,7 @@
 # coding:utf-8
 from __future__ import unicode_literals
 
+import re
 import datetime
 import json
 
@@ -50,11 +51,21 @@ class Writer(object):
 
 class Reader(object):
 
+    @staticmethod
+    def hook(dict_):
+        for k, v in dict_.items():
+            if isinstance(v, basestring) and re.search("^\d{4}-\d{2}-\d{2}", v):
+                try:
+                    dict_[k] = datetime.datetime.strptime(v, "%Y-%m-%dT%H:%M:%S")
+                except ValueError:
+                    pass
+        return dict_
+
     def __init__(self, file_path):
         self.file = open(file_path, 'r')
 
     def readlines(self):
         for line in self.file.readlines():
-            yield json.loads(line)
+            yield json.loads(line, object_hook=Reader.hook)
         self.file.close()
         raise StopIteration

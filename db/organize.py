@@ -1,7 +1,8 @@
 # coding:utf-8
 from __future__ import unicode_literals
 
-from db.models import Girl
+from scrape.helpers import to_biz_date
+from db.models import Girl, Attendance
 
 
 def organize_data(data):
@@ -28,4 +29,18 @@ class Organizer(object):
             girl.save()
             return girl, True
 
-
+    def process_attendance(self, data):
+        """:rtype: (Attendance, bool)"""
+        try:
+            pk = Attendance.composite_pk(
+                data['girl_id'],
+                to_biz_date(data['checked_term']))
+            return Attendance.find_by_pk_with_cache(pk), False
+        except Attendance.DoesNotExist:
+            atnd = Attendance()
+            atnd.girl = Girl.find_by_pk_with_cache(data['girl_id'])
+            atnd.date = to_biz_date(data['checked_term'])
+            atnd.clock_in = data['clock_in']
+            atnd.clock_out = data['clock_out']
+            atnd.save()
+            return atnd, True

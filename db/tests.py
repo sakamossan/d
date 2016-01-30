@@ -56,9 +56,35 @@ class TestOrganizer(TestCase):
         self.assertTrue('grpb0012285394_0000000000pc.jpg?cache02=1453258218' in girl.img_url)
 
         # second
-        girl, is_new = self.org.process_girl(datum)
-        self.assertFalse(is_new)
+        girl, is_not_new = self.org.process_girl(datum)
+        self.assertFalse(is_not_new)
         self.assertEqual(girl.id, '12285394')
 
         # count-inserted
         self.assertEqual(Girl.count(), 1)
+
+    def test_process_attendance(self):
+        datum = self.data[1]
+
+        # exercise
+        self.org.process_girl(datum)
+
+        # first
+        atnd, is_new = self.org.process_attendance(datum)
+        self.assertTrue(is_new)
+        self.assertEqual(atnd.id, '12192627-20160130')
+        self.assertEqual(atnd.girl.id, '12192627')
+        self.assertEqual(atnd.date, datetime.date(2016, 1, 30))
+        self.assertEqual(atnd.clock_in, datetime.datetime(2016, 1, 30, 18, 0, 0))
+        self.assertEqual(atnd.clock_out, datetime.datetime(2016, 1, 31, 2, 0, 0))
+
+        # second
+        snd, is_not_new = self.org.process_attendance(datum)
+        self.assertFalse(is_not_new)
+        self.assertEqual(snd.id, '12192627-20160130')
+
+        # count-inserted
+        self.assertEqual(Attendance.count(), 1)
+
+
+
