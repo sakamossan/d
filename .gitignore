@@ -1,5 +1,5 @@
 *.sqlite3
 *.sqlite
 *.py[cod]
-log/*.jl
+resources/jsonl/*.jsonl
 .coverage

@@ -31,3 +31,5 @@ class TestSaves(TestCase):
             status='work',
         )
         self.assertEqual(log.id, '1000000000-20160202-203000')
+
+
