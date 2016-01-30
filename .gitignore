@@ -1,4 +1,5 @@
 *.sqlite3
 *.sqlite
-*.pyc
+*.py[cod]
 log/*.jl
+.coverage

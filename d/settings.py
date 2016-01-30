@@ -30,6 +30,7 @@ ALLOWED_HOSTS = []
 
 # Application definition
 D_APP = [
+    'db',
     'scrape',
 ]
 

@@ -13,6 +13,10 @@ class ModelBase(TimeStampedModel):
     def __str__(self):
         return "(%s:id=%s)" % (self.__class__.__name__, self.id)
 
+    @classmethod
+    def find_by_pk(cls, pk):
+        return cls.objects.get(pk=pk)
+
 
 class Shop(ModelBase):
 
