@@ -8,6 +8,12 @@ from jsonl.rw import jsonl_file_path, Writer, Reader
 from scrape.tests.test_scraper import mocked_scraper
 
 
+def dummy_data():
+    path = './resources/tests/test_20010327.jsonl'
+    rdr = Reader(path)
+    return list(rdr.readlines())
+
+
 def test_jsonl_file_path():
     assert jsonl_file_path(datetime.date(2016, 3, 27), 'z') == "./resources/jsonl/z20160327.jsonl"
 

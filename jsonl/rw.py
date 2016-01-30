@@ -56,4 +56,5 @@ class Reader(object):
     def readlines(self):
         for line in self.file.readlines():
             yield json.loads(line)
+        self.file.close()
         raise StopIteration

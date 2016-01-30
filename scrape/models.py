@@ -1,6 +1,7 @@
 # coding: utf-8
 from __future__ import unicode_literals
 
+from functools32 import lru_cache
 from django.db import models
 from django_extensions.db.models import TimeStampedModel
 
@@ -16,6 +17,15 @@ class ModelBase(TimeStampedModel):
     @classmethod
     def find_by_pk(cls, pk):
         return cls.objects.get(pk=pk)
+
+    @classmethod
+    @lru_cache(maxsize=2048)
+    def find_by_pk_with_cache(cls, *args):
+        return cls.find_by_pk(*args)
+
+    @classmethod
+    def count(cls):
+        return cls.objects.count()
 
 
 class Shop(ModelBase):

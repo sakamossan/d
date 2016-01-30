@@ -4,7 +4,9 @@ from __future__ import unicode_literals
 import datetime
 from django.test import TestCase
 from scrape.models import Shop
+from jsonl.tests import dummy_data
 from db.models import Girl, Attendance, StatusLog
+from db.organize import Organizer
 
 
 class TestSaves(TestCase):
@@ -33,3 +35,30 @@ class TestSaves(TestCase):
         self.assertEqual(log.id, '1000000000-20160202-203000')
 
 
+class TestOrganizer(TestCase):
+
+    fixtures = ['scrape.json']
+
+    def setUp(self):
+        self.org = Organizer()
+        self.data = dummy_data()
+
+    def test_process_girl(self):
+        datum = self.data[0]
+
+        # first
+        girl, is_new = self.org.process_girl(datum)
+        self.assertTrue(is_new)
+        self.assertEqual(girl.id, '12285394')
+        self.assertEqual(girl.name, 'エルメ')
+        self.assertEqual(girl.age, 23)
+        self.assertEqual(girl.shop_id, 'honeyplaza')
+        self.assertTrue('grpb0012285394_0000000000pc.jpg?cache02=1453258218' in girl.img_url)
+
+        # second
+        girl, is_new = self.org.process_girl(datum)
+        self.assertFalse(is_new)
+        self.assertEqual(girl.id, '12285394')
+
+        # count-inserted
+        self.assertEqual(Girl.count(), 1)
