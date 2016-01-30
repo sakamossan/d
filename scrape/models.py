@@ -20,8 +20,8 @@ class ModelBase(TimeStampedModel):
 
     @classmethod
     @lru_cache(maxsize=2048)
-    def find_by_pk_with_cache(cls, *args):
-        return cls.find_by_pk(*args)
+    def find_by_pk_with_cache(cls, *args, **kw):
+        return cls.find_by_pk(*args, **kw)
 
     @classmethod
     def count(cls):
