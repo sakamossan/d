@@ -1,12 +1,13 @@
 # coding:utf-8
 from __future__ import unicode_literals
 
+import re
 import datetime
 import json
 
 
-def jlfile_path(date, pref=''):
-    return "./log/{0}{1:%Y%m%d}.jl".format(pref, date)
+def jsonl_file_path(date, pref=''):
+    return "./resources/jsonl/{0}{1:%Y%m%d}.jsonl".format(pref, date)
 
 
 class Writer(object):
@@ -38,7 +39,7 @@ class Writer(object):
             cls=self.Encoder
         )
 
-    def write_jsonlines(self, list_of_serializable, delim="\n", file_close=False):
+    def write(self, list_of_serializable, delim="\n", file_close=False):
         """:type list_of_serializable: list[dict|list]"""
         self.file.writelines([
             (self.to_json(d) + delim).encode('utf-8')
@@ -46,3 +47,25 @@ class Writer(object):
         ])
         if file_close:
             self.file.close()
+
+
+class Reader(object):
+
+    @staticmethod
+    def hook(dict_):
+        for k, v in dict_.items():
+            if isinstance(v, basestring) and re.search("^\d{4}-\d{2}-\d{2}", v):
+                try:
+                    dict_[k] = datetime.datetime.strptime(v, "%Y-%m-%dT%H:%M:%S")
+                except ValueError:
+                    pass
+        return dict_
+
+    def __init__(self, file_path):
+        self.file = open(file_path, 'r')
+
+    def readlines(self):
+        for line in self.file.readlines():
+            yield json.loads(line, object_hook=Reader.hook)
+        self.file.close()
+        raise StopIteration
