@@ -1,0 +1,20 @@
+[
+  {
+    "model": "scrape.shop",
+    "pk": "gingira",
+    "fields": {
+      "created": "2016-01-17T13:16:55.286Z",
+      "modified": "2016-01-17T13:16:55.286Z",
+      "area": "tt"
+    }
+  },
+  {
+    "model": "scrape.shop",
+    "pk": "honeyplaza",
+    "fields": {
+      "created": "2016-01-17T13:15:51.555Z",
+      "modified": "2016-01-17T13:15:51.555Z",
+      "area": "tt"
+    }
+  }
+]

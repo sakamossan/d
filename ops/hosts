@@ -1,0 +1,2 @@
+# http://mawatari.jp/archives/solution-of-vagrant-ssh-connection-error
+192.168.33.154  ansible_ssh_private_key_file=.vagrant/machines/default/virtualbox/private_key   ansible_ssh_user=vagrant

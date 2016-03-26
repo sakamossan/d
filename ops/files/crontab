@@ -1,0 +1,2 @@
+*/5 * * * * mcsk /mcsk/d/d/scripts/every5minutes.sh >>/tmp/crontab-stdout.log 2>>/tmp/crontab-stderr.log
+
