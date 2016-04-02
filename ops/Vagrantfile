@@ -8,6 +8,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.box = "mcsk-ubuntu-trusty-server-cloudimg-amd64"
   config.vm.box_url = "https://cloud-images.ubuntu.com/vagrant/trusty/current/trusty-server-cloudimg-amd64-vagrant-disk1.box"
   config.vm.network "private_network", ip: "192.168.33.154"
+  config.vm.provider "virtualbox" do |vm|
+    vm.memory = 1024
+  end
+
   config.vm.provision "file", source: "url", destination: "url"
   config.vm.provision "shell", path: "scripts/vagrant_initfile.sh"
 end
