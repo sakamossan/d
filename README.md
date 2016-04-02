@@ -1,6 +1,6 @@
 # d
 
-## env
+## development
 
 ```bash
 virtualenv d && cd $_
@@ -10,6 +10,13 @@ pip install -U setuptools
 pip install -r requirements.txt
 python ./manage.py migrate
 python ./manage.py runserver
+```
+
+## env
+
+```bash
+cd ./ops
+vagrant up
 ```
 
 ## test
