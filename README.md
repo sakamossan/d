@@ -24,3 +24,20 @@ vagrant up
 ```bash
 python ./manage.py test -v 1 -s -p
 ```
+
+
+## commands
+
+### recreate_view
+
+データベースにビューを作成する
+`resources/view_sqls`に入っているファイルの内容をDBに適用している
+
+### run_scrape
+
+scrape処理を実行する。結果はjsonl形式で出力される
+
+### log2db
+
+jsonl形式で蓄積したデータをDBに入れる
+
