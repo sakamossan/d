@@ -3,3 +3,4 @@
 *.py[cod]
 resources/jsonl/*.jsonl
 .coverage
+setting_secret.py
