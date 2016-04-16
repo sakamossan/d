@@ -61,30 +61,16 @@ EOF"
 : "project" && {
     sudo su - mcsk sh -c "mkdir -p /mcsk/d/{run,log,bin}"
     sudo su - mcsk sh -c "cd /mcsk/d; git clone https://github.com/sakamossan/d.git"
-    sudo su - mcsk sh -c "cd /mcsk/d/d/; git checkout vagrant"
+    sudo su - mcsk sh -c "cd /mcsk/d/d/; git checkout deploy"
+    sudo su - mcsk sh -c "cp /tmp/files2/setting_secret.py /mcsk/d/d/setting_secret.py"
     sudo su - mcsk sh -c "cd /mcsk/d/d; ~/.pyenv/bin/pyenv exec pip install -r requirements.txt"
     sudo su - mcsk sh -c "cd /mcsk/d/d; ~/.pyenv/bin/pyenv exec python ./manage.py migrate"
     sudo su - mcsk sh -c "cd /mcsk/d/d; ~/.pyenv/bin/pyenv exec python ./manage.py recreate_view"
     sudo su - mcsk sh -c "cd /mcsk/d/d; ~/.pyenv/bin/pyenv exec python ./manage.py loaddata /tmp/files2/user.json"
     sudo su - mcsk sh -c "cd /mcsk/d/d; ~/.pyenv/bin/pyenv exec python ./manage.py loaddata ./ops/files/fixtures/scrape_shop.json"
-# TODO    sudo su - mcsk sh -c "cd /mcsk/d/d; ~/.pyenv/bin/pyenv exec python manage.py collectstatic"
     sudo cp /mcsk/d/d/ops/files/crontab /etc/cron.d/every5minutes
+    sudo su - mcsk sh -c "/mcsk/d/d/ops/files/run_d.sh"
 }
-
-#: "nginx, supervisor, gunicorn" && {
-#    sudo rm /etc/nginx/sites-available/default
-#    sudo cp /mcsk/d/d/ops/files/nginx_d_conf /etc/nginx/sites-available/d
-#    sudo ln -s /etc/nginx/sites-available/d /etc/nginx/sites-enabled/d
-#
-#    sudo cp -r /mcsk/d/d/ops/files/supervisor/conf.d /etc/supervisor/
-#
-#    sudo su - mcsk sh -c "ln -s /mcsk/d/d/ops/files/run.sh /mcsk/d/bin/run.sh"
-#    sudo chmod +x /mcsk/d/bin/run.sh
-#}
-#
-#: "restart" && {
-#    sudo service supervisor restart
-#}
 
 : "redash" && {
     # apt-get dist-upgrade `-y`  $ we usually do not expect interactivity to bootstrap.sh

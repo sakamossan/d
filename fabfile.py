@@ -10,3 +10,10 @@ env.user = 'mcsk'
 
 def say_hostname():
     run('hostname')
+
+
+def deploy(branch='master'):
+    with cd('/mcsk/d/d'):
+        run("git checkout")
+        run("git checkout {}".format(branch))
+
