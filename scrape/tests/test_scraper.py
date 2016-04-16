@@ -52,8 +52,9 @@ def test_extractor():
     # TODO test get_status
 
 
-def test_exception():
-    scr = mocked_scraper('gyakuchikan')
-    extrs = scr.distribute_extractors()
-    for e in extrs:
-        print e.extract()
+def test_not_girl_exception():
+
+    scr = mocked_scraper('gingira')
+    not_girl = scr.distribute_extractors()[0]
+    assert not_girl.extract() == 'http://www.cityheaven.net/tt/gingira/A6GirlDetailProfile/?girlId=10382291'
+
