@@ -8,8 +8,8 @@ from scrape.scraper import Page, Scraper
 
 
 @functools32.lru_cache()
-def mocked_scraper():
-    with open('resources/tests/hp.html') as f:
+def mocked_scraper(shop_id='hp'):
+    with open('resources/tests/{}.html'.format(shop_id)) as f:
         html = f.read()
     page = mock.Mock()
     page.get_html.return_value = html
@@ -51,3 +51,9 @@ def test_extractor():
 
     # TODO test get_status
 
+
+def test_exception():
+    scr = mocked_scraper('gyakuchikan')
+    extrs = scr.distribute_extractors()
+    for e in extrs:
+        print e.extract()
