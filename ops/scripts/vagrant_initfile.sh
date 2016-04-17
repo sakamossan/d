@@ -55,7 +55,6 @@ EOF"
     sudo su - mcsk sh -c "~/.pyenv/bin/pyenv install 2.7.10"
     sudo su - mcsk sh -c "~/.pyenv/bin/pyenv global 2.7.10"
     sudo su - mcsk sh -c "~/.pyenv/bin/pyenv exec pip install --upgrade pip"
-    sudo su - mcsk sh -c "~/.pyenv/bin/pyenv exec pip install gunicorn"
 }
 
 : "project" && {
