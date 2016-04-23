@@ -136,3 +136,8 @@ NOSE_ARGS = [
     # '--cover-branches',
     # '--cover-erase',
 ]
+
+try:
+    from d.setting_secret import *
+except ImportError:
+    pass

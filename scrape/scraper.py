@@ -49,17 +49,6 @@ class Scraper(object):
 class ExtractException(ValueError):
     pass
 
-class NotGirlException(ExtractException):
-    """
-    gingiraなどでは割引情報の広告が嬢に紛れて表示されている
-    出勤情報として不適格なので例外とする
-    """
-    def __init__(self, girl_id):
-        self.girl_id = girl_id
-
-    def girl_url(self):
-        return "http://www.cityheaven.net/tt/honeyplaza/A6GirlDetailProfile/?girlId={}".format(self.girl_id)
-
 
 class Extractor(object):
 
@@ -83,20 +72,21 @@ class Extractor(object):
                 'clock_out': out,
                 'checked_term': current_term()
             }
-        except NotGirlException as e:
-            # TODO logging
-            # TODO blacklistテーブルみたいなの作って、そこに入ってるIDは弾くようにしたい
-            print e.girl_url()
+        except ExtractException:
+            base = "http://www.cityheaven.net/tt/{}/A6GirlDetailProfile/?girlId={}"
+            ret = base.format(self.get_shop_id(), self.get_girl_id())
+            print ret  # TODO logging
+            return ret
 
     def get_age(self):
         txt = self.chunk.find("th").text
         if '割】' in txt:
             # gingira?
-            raise NotGirlException(self.get_girl_id())
+            raise ExtractException
         found = re.findall(r'\d{2}', txt)
         if not found:
             # honeyplaza?
-            raise NotGirlException(self.get_girl_id())
+            raise ExtractException
         return int(found[0])
 
     def get_status(self, now=None):
