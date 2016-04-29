@@ -36,3 +36,11 @@ class Shop(ModelBase):
     @classmethod
     def scrapeable(cls):
         return cls.objects.all()
+
+
+class BlackList(ModelBase):
+
+    def __str__(self):
+        return self.girl_id
+
+    girl_id = models.CharField(primary_key=True, max_length=16)

@@ -7,6 +7,7 @@ import bs4
 import datetime
 
 from scrape.helpers import clock_to_datetime, current_term
+from scrape.models import BlackList
 
 
 # 最低限検索に引っかからないようにする
@@ -58,10 +59,13 @@ class Extractor(object):
         self.chunk_branch = self.chunk.findAll("tr")[-1]
 
     def extract(self):
+        girl_id = self.get_girl_id()
+        is_skip = self.is_skip(girl_id)
+        if not is_skip: return is_skip
         in_, out = self.get_clock_in_out()
         try:
             return {
-                'girl_id': self.get_girl_id(),
+                'girl_id': girl_id,
                 'name': self.get_name(),
                 'age': self.get_age(),
                 'img_url': self.get_img_url(),
@@ -130,3 +134,10 @@ class Extractor(object):
         clocks = re.findall("(\d{1,2}:\d{1,2})", clocks_text)
         # 全て休日になっている場合は勤務時間が取得できない
         return map(clock_to_datetime, clocks) or [None, None]
+
+    def is_skip(self, girl_id):
+        black_list_girl = BlackList.objects.filter(girl_id=girl_id)
+        if black_list_girl:
+            return False
+        else:
+            return True
